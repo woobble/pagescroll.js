@@ -1,0 +1,33 @@
+{
+  "name": "easyscroll",
+  "version": "0.0.1",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "webpack"
+  },
+  "files": [
+    "dist/*",
+    "src/*",
+    "*.json",
+    "*.js"
+  ],
+  "keywords": [],
+  "author": "Woobble",
+  "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Woobble/easyscroll.js.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Woobble/easyscroll.js/issues"
+  },
+  "homepage": "https://github.com/Woobble/easyscroll.js#readme",
+  "description": "",
+  "devDependencies": {
+    "sass": "^1.32.5",
+    "sass-loader": "^10.1.1",
+    "webpack": "^5.17.0",
+    "webpack-cli": "^4.4.0"
+  }
+}
