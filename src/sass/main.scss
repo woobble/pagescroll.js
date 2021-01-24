@@ -11,7 +11,8 @@ html.pscroll-html ,
 
 div#pscroll_container,
 div.pscroll_sections,
-div.pscroll_section {
+  // div.pscroll_section
+{
   height: 100%;
   position: relative;
 }
@@ -23,9 +24,10 @@ div#pscroll_container {
     background-color: #000;
     background-size: cover;
     background-position: 50% 50%;
-    display: none !important;
+    transition: height .8s ease;
+    height: 0;
     &.pscroll_active {
-      display: block !important;
+      height: 100%;
     }
   }
 }

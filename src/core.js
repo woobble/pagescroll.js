@@ -17,6 +17,7 @@ const PScroll = class {
         this.sections = []
         this.callbacks = []
         this.sectionTags = new Map()
+        this.waiting = false
         this.initialize()
     }
 
@@ -66,18 +67,29 @@ const PScroll = class {
     }
 
     goUp() {
+        if(this.waiting) return;
         if((this.currentSectionId - 1) >= 0) {
+            this.waiting = true
             const newId = this.currentSectionId - 1
             this.activeSection = newId
             pushAnchor(this.getTagForIndex(newId))
+            setTimeout(() => {
+                this.waiting = false
+            }, 1000)
         }
     }
 
     goDown() {
+        window.console.log(this.waiting)
+        if(this.waiting) return;
         if((this.currentSectionId + 1) < this.sections.length) {
+            this.waiting = true
             const newId = this.currentSectionId + 1
             this.activeSection = newId
             pushAnchor(this.getTagForIndex(newId))
+            setTimeout(() => {
+                this.waiting = false
+            }, 1000)
         }
     }
 
@@ -225,4 +237,3 @@ PScroll.fn = function (options = {}) {
 
 window.PScroll = PScroll.fn
 export default PScroll.fn
-
