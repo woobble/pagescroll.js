@@ -80,7 +80,6 @@ const PScroll = class {
     }
 
     goDown() {
-        window.console.log(this.waiting)
         if(this.waiting) return;
         if((this.currentSectionId + 1) < this.sections.length) {
             this.waiting = true
