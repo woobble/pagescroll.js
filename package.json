@@ -1,5 +1,5 @@
 {
-  "name": "pagescroll",
+  "name": "@woobble/pagescroll",
   "version": "0.0.1",
   "main": "./src/index.js",
   "scripts": {
