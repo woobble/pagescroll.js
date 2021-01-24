@@ -147,5 +147,5 @@ function removeClass($el, clazz) {
     if($el.classList) $el.classList.remove(clazz)
 }
 
-export default PScroll.prototype = PScroll
+export default PScroll
 
