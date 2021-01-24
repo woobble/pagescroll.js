@@ -46,7 +46,7 @@ const PScroll = class {
 
         (function (pScroll) {
 
-            window.addEventListener('wheel', function(event) {
+            document.addEventListener('wheel', function(event) {
                 if (event.deltaY < 0) {
                     pScroll.goUp()
                 } else if (event.deltaY > 0) {
