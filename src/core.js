@@ -11,12 +11,12 @@ const SECTION_ACTIVE_CLASS = `.${SECTION_ACTIVE}`
 const PScroll = class {
 
     constructor(options = {}) {
-        this.anchors = options.anchors ??  []
-        this.fallBackSection = options.fallBack ?? 0
+        this.anchors = options.anchors ||  []
+        this.fallBackSection = options.fallBack || 0
         this.initialized = false
         this.sectionTags = new Map()
-        this.sections = new NodeList()
-        this.callbacks = new NodeList()
+        this.sections = []
+        this.callbacks = new Set()
         this.initialize()
     }
 
@@ -25,23 +25,23 @@ const PScroll = class {
             throw new Error("PScroll instance is already initialized");
         }
         this.initialized = true;
-        (function(pScroll, root, initializeStructure, _sections) {
+        (function(pScroll, root, initializeStructure, sections) {
             initializeStructure(root);
-            const sections = _sections(pScroll, root);
-            if(sections.length > 0) pScroll.activeSection = pScroll.fallBackSection
+            sections(pScroll, root);
+            if(pScroll.sections.length > 0) pScroll.activeSection = pScroll.fallBackSection
         }(this, function () {
-            return $('#page_container') ?? throw new Error("Cannot initialize PScroll, cause there is not element with id: 'pscroll'");
+            return select('#page_container')
         }, function (root) {
             initializeAndCheckStructure(root)
         }, function (pScroll, root) {
             let i = 0;
-            $(SECTION_CLASS, root).forEach(value => {
-                this.sections.add(value)
-                const sectionAnchor = pScroll.anchors[i] ?? anchorName()
+            select(SECTION_CLASS, root).forEach(value => {
+                pScroll.sections.push(value)
+                const sectionAnchor = pScroll.anchors[i] || anchorName()
                 pScroll.sectionTags.set(sectionAnchor, value)
                 i++;
             })
-            return this.sections
+            return pScroll.sections
         }));
     }
 
@@ -51,16 +51,16 @@ const PScroll = class {
         (function (pScroll) {
             const section = pScroll.sections[pScroll.currentSectionId]
 
-            if(section !== null && hasClass(section, SECTION_ACTIVE_CLASS)) {
-                removeClass(section, SECTION_ACTIVE_CLASS)
+            if(section && hasClass(section, SECTION_ACTIVE)) {
+                removeClass(section, SECTION_ACTIVE)
             }
 
-        }(this))
+        }(this));
 
-        this.currentSectionId = id
+        this.currentSectionId = id;
 
         (function (pScroll, setActiveClass) {
-            const section = pScroll.sections[pScroll.currentSectionId]
+            const section = pScroll.sections[id]
 
             if(!section) {
                 window.console.warn("Cannot find section. Getting back to fallback")
@@ -70,10 +70,10 @@ const PScroll = class {
             setActiveClass(section)
         }(this, function (elem) {
             if(!elem) return;
-            if(!hasClass(elem, SECTION_ACTIVE_CLASS)) {
-                addClass(elem, SECTION_ACTIVE_CLASS)
+            if(!hasClass(elem, SECTION_ACTIVE)) {
+                addClass(elem, SECTION_ACTIVE)
             }
-        }))
+        }));
 
 
         this.callbacks.forEach(value => value(id))
@@ -96,23 +96,13 @@ const PScroll = class {
 }
 
 
-
+let id = 1;
 function anchorName() {
-    return makeId(5)
-}
-
-function makeId(length) {
-    let result = '';
-    let characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-    let charactersLength = characters.length;
-    for ( let i = 0; i < length; i++ ) {
-        result += characters.charAt(Math.floor(Math.random() * charactersLength));
-    }
-    return result;
+    return `undef${id++}`
 }
 
 function initializeAndCheckStructure(root) {
-    const htmlEl = $("html")[0]
+    const htmlEl = select("html")[0]
 
     if(!hasClass(htmlEl, HTML)) {
         addClass(htmlEl, HTML)
@@ -131,7 +121,7 @@ function style(elements, styles) {
     return elements
 }
 
-function $(selector, context) {
+function select(selector, context) {
     context = arguments > 1 ? context : document
     return context ? context.querySelectorAll(selector) : null
 }
