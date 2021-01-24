@@ -28,7 +28,10 @@ const PScroll = class {
         (function(pScroll, root, initializeStructure, sections) {
             initializeStructure(root);
             sections(pScroll, root);
-            if(pScroll.sections.length > 0) pScroll.activeSection = pScroll.fallBackSection
+            if(pScroll.sections.length > 0) {
+                const tag = getAnchor()
+                pScroll.activeSection = pScroll.sectionTags.get(tag) || pScroll.fallBackSection
+            }
         }(this, function () {
             return select('#page_container')
         }, function (root) {
@@ -66,7 +69,7 @@ const PScroll = class {
         if((this.currentSectionId - 1) >= 0) {
             const newId = this.currentSectionId - 1
             this.activeSection = newId
-            pushAnchor(this.sectionTags.keys()[newId])
+            pushAnchor(this.getTagForIndex(newId))
         }
     }
 
@@ -74,7 +77,7 @@ const PScroll = class {
         if((this.currentSectionId + 1) < this.sections.length) {
             const newId = this.currentSectionId + 1
             this.activeSection = newId
-            pushAnchor(this.sectionTags.keys()[newId])
+            pushAnchor(this.getTagForIndex(newId))
         }
     }
 
@@ -139,14 +142,18 @@ const PScroll = class {
         this.callbacks.push(callback)
     }
 
-}
-
-Map.prototype.indexOf = function (key) {
-    this.forEach(value => {
-        if(value === key) {
-            return value
+    getTagForIndex (index) {
+        let val = null;
+        if(index >= 0) {
+            this.sectionTags.forEach((_index, value) => {
+                if(index === _index) {
+                    val = value;
+                }
+            })
         }
-    })
+        return val;
+    }
+
 }
 
 function pushAnchor(tag) {
