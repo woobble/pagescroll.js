@@ -1,12 +1,26 @@
+let HtmlWebpackPlugin = require('html-webpack-plugin');
+let path = require('path');
+
 module.exports = {
+    entry: ["./src/"],
+    output: {
+        path: path.resolve(__dirname, './dist'),
+    },
     module: {
         rules: [
             {
-                test: /\.s[ac]aa$/i,
+                test: /\.s[ac]ss$/i,
                 use: [
-                    "style-loader",
-                    "css-loader",
-                    "sass-loader"
+                    {
+                        loader: 'file-loader',
+                        options: {
+                            name: '[name].css',
+                        }
+                    },
+                    'extract-loader',
+                    'css-loader',
+                    // 'postcss-loader',
+                    'sass-loader'
                 ]
             },
             {
@@ -20,5 +34,8 @@ module.exports = {
                 }
             }
         ]
-    }
+    },
+    plugins: [new HtmlWebpackPlugin({
+        template: "./public/index.html"
+    })]
 }

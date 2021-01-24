@@ -1,0 +1,31 @@
+*,html,body {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+html.pscroll-html ,
+.pscroll-html body {
+  height: 100%;
+  overflow: hidden;
+}
+
+div#pscroll_container,
+div.pscroll_sections,
+div.pscroll_section {
+  height: 100%;
+  position: relative;
+}
+
+div#pscroll_container {
+
+
+  div.pscroll_section {
+    background-color: #000;
+    background-size: cover;
+    background-position: 50% 50%;
+    display: none !important;
+    &.pscroll_active {
+      display: block !important;
+    }
+  }
+}
