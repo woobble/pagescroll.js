@@ -43,6 +43,30 @@ const PScroll = class {
             })
             return pScroll.sections
         }));
+
+        (function (pScroll) {
+
+            window.addEventListener('wheel', function(event) {
+                if (event.deltaY < 0) {
+                    pScroll.goUp()
+                } else if (event.deltaY > 0) {
+                    pScroll.goDown()
+                }
+            });
+        }(this));
+
+    }
+
+    goUp() {
+        if(this.sections[this.currentSectionId - 1] !== null) {
+            this.activeSection = this.currentSectionId - 1
+        }
+    }
+
+    goDown() {
+        if(this.sections[this.currentSectionId + 1] !== null) {
+            this.activeSection = this.currentSectionId + 1
+        }
     }
 
     set activeSection(id) {
@@ -89,19 +113,18 @@ const PScroll = class {
     }
 
     afterScroll(callback) {
-        if (typeof callback !== "function") throw new Error("")
+        if (typeof callback !== "function") return;
         this.callbacks.add(callback)
     }
 
 }
-
 
 let id = 1;
 function anchorName() {
     return `undef${id++}`
 }
 
-function initializeAndCheckStructure(root) {
+function initializeAndCheckStructure() {
     const htmlEl = select("html")[0]
 
     if(!hasClass(htmlEl, HTML)) {
@@ -147,5 +170,13 @@ function removeClass($el, clazz) {
     if($el.classList) $el.classList.remove(clazz)
 }
 
-export default PScroll
+PScroll.fn = PScroll.prototype = function (options = {}) {
+    if(typeof document == "undefined" || typeof window == "undefined") {
+        console.exception("document and window has to be defined")
+        return null;
+    }
+    return new PScroll(options)
+}
+
+export default PScroll.fn
 
