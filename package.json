@@ -1,7 +1,7 @@
 {
-  "name": "easyscroll",
+  "name": "pagescroll",
   "version": "0.0.1",
-  "main": "src/index.js",
+  "main": "dist/main.js",
   "scripts": {
     "build": "webpack --mode=production",
     "build-dev": "webpack --mode=development",
