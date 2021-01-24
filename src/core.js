@@ -11,18 +11,18 @@ const SECTION_ACTIVE_CLASS = `.${SECTION_ACTIVE}`
 const PScroll = class {
 
     constructor(options = {}) {
-        this.anchors = options.anchors ||  []
+        this.tags = options.tags || []
         this.fallBackSection = options.fallBack || 0
         this.initialized = false
-        this.sectionTags = new Map()
         this.sections = []
-        this.callbacks = new Set()
+        this.callbacks = []
+        this.sectionTags = new Map()
         this.initialize()
     }
 
     initialize() {
         if(this.initialized) {
-            throw new Error("PScroll instance is already initialized");
+            return;
         }
         this.initialized = true;
         (function(pScroll, root, initializeStructure, sections) {
@@ -37,8 +37,8 @@ const PScroll = class {
             let i = 0;
             select(SECTION_CLASS, root).forEach(value => {
                 pScroll.sections.push(value)
-                const sectionAnchor = pScroll.anchors[i] || anchorName()
-                pScroll.sectionTags.set(sectionAnchor, value)
+                const sectionAnchor = pScroll.tags[i] || anchorName()
+                pScroll.sectionTags.set(sectionAnchor, i)
                 i++;
             })
             return pScroll.sections
@@ -55,17 +55,26 @@ const PScroll = class {
             });
         }(this));
 
+        const tag = getAnchor()
+        if(tag) {
+            this.goToTag(tag)
+        }
+
     }
 
     goUp() {
-        if(this.sections[this.currentSectionId - 1] !== null) {
-            this.activeSection = this.currentSectionId - 1
+        if((this.currentSectionId - 1) >= 0) {
+            const newId = this.currentSectionId - 1
+            this.activeSection = newId
+            pushAnchor(this.sectionTags.keys()[newId])
         }
     }
 
     goDown() {
-        if(this.sections[this.currentSectionId + 1] !== null) {
-            this.activeSection = this.currentSectionId + 1
+        if((this.currentSectionId + 1) < this.sections.length) {
+            const newId = this.currentSectionId + 1
+            this.activeSection = newId
+            pushAnchor(this.sectionTags.keys()[newId])
         }
     }
 
@@ -89,6 +98,7 @@ const PScroll = class {
             if(!section) {
                 window.console.warn("Cannot find section. Getting back to fallback")
                 setActiveClass(pScroll.sections[pScroll.fallBackSection])
+                pScroll.currentSectionId = pScroll.fallBackSection;
                 return;
             }
             setActiveClass(section)
@@ -108,15 +118,43 @@ const PScroll = class {
         return this.sections[this.currentSectionId]
     }
 
-    async scrollTo(id) {
-        this.activeSection = id
+    goTo(id) {
+        if(((this.currentSectionId + 1) < this.sections.length) &&
+            ((this.currentSectionId - 1) >= 0)) {
+            this.activeSection = id
+        }
+    }
+
+    goToTag(tag) {
+        if(!tag) return;
+        const tagId = this.sectionTags.get(tag)
+        if(tagId) {
+            this.goTo(tagId)
+            pushAnchor(tag)
+        }
     }
 
     afterScroll(callback) {
         if (typeof callback !== "function") return;
-        this.callbacks.add(callback)
+        this.callbacks.push(callback)
     }
 
+}
+
+Map.prototype.indexOf = function (key) {
+    this.forEach(value => {
+        if(value === key) {
+            return value
+        }
+    })
+}
+
+function pushAnchor(tag) {
+    window.location.href = `#${tag}`
+}
+
+function getAnchor() {
+    return window.location.hash.replace('#', '')
 }
 
 let id = 1;
@@ -170,7 +208,7 @@ function removeClass($el, clazz) {
     if($el.classList) $el.classList.remove(clazz)
 }
 
-PScroll.fn = PScroll.prototype = function (options = {}) {
+PScroll.fn = function (options = {}) {
     if(typeof document == "undefined" || typeof window == "undefined") {
         console.exception("document and window has to be defined")
         return null;
@@ -178,5 +216,6 @@ PScroll.fn = PScroll.prototype = function (options = {}) {
     return new PScroll(options)
 }
 
+window.PScroll = PScroll.fn
 export default PScroll.fn
 
