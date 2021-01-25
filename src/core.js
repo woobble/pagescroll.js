@@ -1,5 +1,3 @@
-import isMobile from "is-mobile";
-
 // HTML Classes
 
 const HTML = "pscroll-html"
