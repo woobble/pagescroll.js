@@ -33,8 +33,8 @@ const PScroll = class {
         this.callbacks = null
         this.waiting = null
         document.removeEventListener("wheel", this.wheelEvent)
-        document.removeEventListener("touchend", this.touchend)
-        document.removeEventListener("touchstart", this.touchstart)
+        document.removeEventListener("touchmove", this.moveTouch)
+        document.removeEventListener("touchstart", this.startTouch)
         unregister()
     }
 
@@ -75,27 +75,47 @@ const PScroll = class {
                 }
             }, false);
 
-            let touchstartX = 0;
-            let touchstartY = 0;
-            let touchendX = 0;
-            let touchendY = 0;
+            (function (pScroll) {
+                document.addEventListener("touchstart", pScroll.startTouch = startTouch, false);
+                document.addEventListener("touchmove", pScroll.moveTouch = moveTouch, false);
 
-            document.addEventListener("touchstart", pScroll.touchstart = function (e) {
-                touchstartX = e.screenX;
-                touchstartY = e.screenY;
-            }, false)
+                let initialX = null;
+                let initialY = null;
 
-            document.addEventListener("touchend", pScroll.touchend = function (e) {
-                touchendX = e.screenX;
-                touchendY = e.screenY;
-                (function () {
-                    if (touchendY < touchstartY) {
-                        pScroll.goDown()
-                    }else  if (touchendY > touchstartY) {
-                        pScroll.goUp()
+                function startTouch(e) {
+                    initialX = e.touches[0].clientX;
+                    initialY = e.touches[0].clientY;
+                }
+
+                function moveTouch(e) {
+                    if (initialX === null) {
+                        return;
                     }
-                }())
-            }, false)
+
+                    if (initialY === null) {
+                        return;
+                    }
+
+                    let currentX = e.touches[0].clientX;
+                    let currentY = e.touches[0].clientY;
+
+                    let diffX = initialX - currentX;
+                    let diffY = initialY - currentY;
+
+                    if(Math.abs(diffX) < Math.abs(diffY)){
+                        if (diffY > 0) {
+                            pScroll.goDown()
+                        } else {
+                            pScroll.goUp()
+                        }
+                    }
+
+                    initialX = null;
+                    initialY = null;
+
+                }
+
+            }(pScroll))
 
         }(this));
 
