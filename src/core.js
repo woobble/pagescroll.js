@@ -15,12 +15,13 @@ const PScroll = class {
     constructor(options = {}) {
         this.tags = options.tags || []
         this.fallBackSection = options.fallBack || 0
+        const initialize = options.initialize || true
         this.initialized = false
         this.sections = []
         this.callbacks = []
         this.sectionTags = new Map()
         this.waiting = false
-        this.initialize()
+        if(initialize) this.initialize()
     }
 
     destroy() {
