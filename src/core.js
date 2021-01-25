@@ -1,3 +1,5 @@
+import isMobile from "is-mobile";
+
 // HTML Classes
 
 const HTML = "pscroll-html"
@@ -19,6 +21,19 @@ const PScroll = class {
         this.sectionTags = new Map()
         this.waiting = false
         this.initialize()
+    }
+
+    destroy() {
+        if(!this.initialized) return;
+        this.tags = null
+        this.fallBackSection = null
+        this.sectionTags = null
+        this.sections = null
+        this.callbacks = null
+        this.waiting = null
+        document.removeEventListener("wheel", this.wheelEvent)
+        document.removeEventListener("touchend", this.touchend)
+        document.removeEventListener("touchstart", this.touchstart)
     }
 
     initialize() {
@@ -50,13 +65,40 @@ const PScroll = class {
 
         (function (pScroll) {
 
-            document.addEventListener('wheel', function(event) {
+            document.addEventListener('wheel', pScroll.wheelEvent = function(event) {
                 if (event.deltaY < 0) {
                     pScroll.goUp()
                 } else if (event.deltaY > 0) {
                     pScroll.goDown()
                 }
-            });
+            }, false);
+
+            if(isMobile()) {
+
+                let touchstartX = 0;
+                let touchstartY = 0;
+                let touchendX = 0;
+                let touchendY = 0;
+
+                document.addEventListener("touchstart", pScroll.touchstart = function (e) {
+                    touchstartX = e.screenX;
+                    touchstartY = e.screenY;
+                })
+
+                document.addEventListener("touchend", pScroll.touchend = function (e) {
+                    touchendX = e.screenX;
+                    touchendY = e.screenY;
+                    (function () {
+                        if (touchendY < touchstartY) {
+                            pScroll.goDown()
+                        }else  if (touchendY > touchstartY) {
+                            pScroll.goUp()
+                        }
+                    }())
+                })
+
+            }
+
         }(this));
 
         const tag = getAnchor()
