@@ -2,7 +2,6 @@ on:
   push:
     tags:
     - 'v*'
-    - 'b*'
 
 name: Upload Release Asset
 
