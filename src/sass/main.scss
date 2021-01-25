@@ -9,9 +9,8 @@ html.pscroll-html ,
   overflow: hidden;
 }
 
-div#pscroll_container,
-div.pscroll_sections,
-  // div.pscroll_section
+#pscroll_container,
+div.pscroll_sections
 {
   height: 100%;
   position: relative;
@@ -19,9 +18,7 @@ div.pscroll_sections,
 
 div#pscroll_container {
 
-
   div.pscroll_section {
-    background-color: #000;
     background-size: cover;
     background-position: 50% 50%;
     transition: height .8s ease;
