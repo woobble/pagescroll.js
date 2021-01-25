@@ -35,6 +35,7 @@ const PScroll = class {
         document.removeEventListener("wheel", this.wheelEvent)
         document.removeEventListener("touchend", this.touchend)
         document.removeEventListener("touchstart", this.touchstart)
+        unregister()
     }
 
     initialize() {
@@ -74,31 +75,27 @@ const PScroll = class {
                 }
             }, false);
 
-            if(isMobile()) {
+            let touchstartX = 0;
+            let touchstartY = 0;
+            let touchendX = 0;
+            let touchendY = 0;
 
-                let touchstartX = 0;
-                let touchstartY = 0;
-                let touchendX = 0;
-                let touchendY = 0;
+            document.addEventListener("touchstart", pScroll.touchstart = function (e) {
+                touchstartX = e.screenX;
+                touchstartY = e.screenY;
+            }, false)
 
-                document.addEventListener("touchstart", pScroll.touchstart = function (e) {
-                    touchstartX = e.screenX;
-                    touchstartY = e.screenY;
-                })
-
-                document.addEventListener("touchend", pScroll.touchend = function (e) {
-                    touchendX = e.screenX;
-                    touchendY = e.screenY;
-                    (function () {
-                        if (touchendY < touchstartY) {
-                            pScroll.goDown()
-                        }else  if (touchendY > touchstartY) {
-                            pScroll.goUp()
-                        }
-                    }())
-                })
-
-            }
+            document.addEventListener("touchend", pScroll.touchend = function (e) {
+                touchendX = e.screenX;
+                touchendY = e.screenY;
+                (function () {
+                    if (touchendY < touchstartY) {
+                        pScroll.goDown()
+                    }else  if (touchendY > touchstartY) {
+                        pScroll.goUp()
+                    }
+                }())
+            }, false)
 
         }(this));
 
@@ -228,6 +225,13 @@ function initializeAndCheckStructure() {
 
     if(!hasClass(htmlEl, HTML)) {
         addClass(htmlEl, HTML)
+    }
+}
+
+function unregister() {
+    const htmlEl = select("html")[0]
+    if(hasClass(htmlEl, HTML)) {
+        removeClass(htmlEl, HTML)
     }
 }
 
