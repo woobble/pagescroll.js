@@ -26,5 +26,8 @@ div#pscroll_container {
     &.pscroll_active {
       height: 100%;
     }
+    &.pscroll_hide {
+      opacity: 0;
+    }
   }
 }

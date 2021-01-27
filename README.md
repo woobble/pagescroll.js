@@ -2,7 +2,6 @@
 
 # pagescroll.js
 
-(not finished)
 [demo](https://woobble.github.io/pagescroll.js/)
 
 Install:
@@ -28,5 +27,16 @@ pScroll.initialize()
 
 // Destroy instance
 pScroll.destroy()
+```
 
+Build
+```
+git clone https://github.com/Woobble/pagescroll.js.git
+
+cd pagescroll.js
+
+npm i
+
+// compiles to ./dist
+npm run build
 ```

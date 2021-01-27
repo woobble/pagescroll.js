@@ -4,7 +4,7 @@ const HTML = "pscroll-html"
 const SECTION = "pscroll_section"
 const SECTION_CLASS = `.${SECTION}`
 const SECTION_ACTIVE = "pscroll_active"
-const SECTION_ACTIVE_CLASS = `.${SECTION_ACTIVE}`
+const SECTION_HIDE = "pscroll_hide"
 
 'use strict'
 
@@ -44,6 +44,9 @@ const PScroll = class {
         (function(pScroll, root, initializeStructure, sections) {
             initializeStructure(root);
             sections(pScroll, root);
+            pScroll.sections.forEach(value => {
+                addClass(value, SECTION_HIDE)
+            })
             if(pScroll.sections.length > 0) {
                 const tag = getAnchor()
                 pScroll.activeSection = pScroll.sectionTags.get(tag) || pScroll.fallBackSection
@@ -127,26 +130,18 @@ const PScroll = class {
     goUp() {
         if(this.waiting) return;
         if((this.currentSectionId - 1) >= 0) {
-            this.waiting = true
             const newId = this.currentSectionId - 1
             this.activeSection = newId
             pushAnchor(this.getTagForIndex(newId))
-            setTimeout(() => {
-                this.waiting = false
-            }, 1000)
         }
     }
 
     goDown() {
         if(this.waiting) return;
         if((this.currentSectionId + 1) < this.sections.length) {
-            this.waiting = true
             const newId = this.currentSectionId + 1
             this.activeSection = newId
             pushAnchor(this.getTagForIndex(newId))
-            setTimeout(() => {
-                this.waiting = false
-            }, 1000)
         }
     }
 
@@ -156,8 +151,13 @@ const PScroll = class {
         (function (pScroll) {
             const section = pScroll.sections[pScroll.currentSectionId]
 
-            if(section && hasClass(section, SECTION_ACTIVE)) {
+            if(section) {
+                pScroll.waiting = true
                 removeClass(section, SECTION_ACTIVE)
+                setTimeout(() => {
+                    pScroll.waiting = false
+                    addClass(section, SECTION_HIDE)
+                }, 800)
             }
 
         }(this));
@@ -178,6 +178,7 @@ const PScroll = class {
             if(!elem) return;
             if(!hasClass(elem, SECTION_ACTIVE)) {
                 addClass(elem, SECTION_ACTIVE)
+                removeClass(elem, SECTION_HIDE)
             }
         }));
 
@@ -299,5 +300,4 @@ PScroll.fn = function (options = {}) {
     return new PScroll(options)
 }
 
-window.PScroll = PScroll.fn
 export default PScroll.fn
