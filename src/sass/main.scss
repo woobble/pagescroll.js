@@ -10,13 +10,13 @@ html.pscroll-html ,
 }
 
 #pscroll_container,
-div.pscroll_sections
+div.pscroll_section
 {
   height: 100%;
   position: relative;
 }
 
-div#pscroll_container {
+#pscroll_container {
 
   div.pscroll_section {
     background-size: cover;
