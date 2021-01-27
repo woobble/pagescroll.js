@@ -10,14 +10,13 @@ on:
     branches: [ master ]
 
 jobs:
-  build:
+  build-and-test:
 
     runs-on: ubuntu-latest
 
     strategy:
       matrix:
         node-version: [10.x, 12.x, 14.x, 15.x]
-        # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
 
     steps:
     - uses: actions/checkout@v2
@@ -25,6 +24,18 @@ jobs:
       uses: actions/setup-node@v1
       with:
         node-version: ${{ matrix.node-version }}
+    - name: Get npm cache directory
+      id: npm-cache-dir
+      run: |
+        echo "::set-output name=dir::$(npm config get cache)"
+    - uses: actions/cache@v2
+      id: npm-cache # use this to check for `cache-hit` ==> if: steps.npm-cache.outputs.cache-hit != 'true'
+      with:
+        path: ${{ steps.npm-cache-dir.outputs.dir }}
+        key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+        restore-keys: |
+          ${{ runner.os }}-node-${{ matrix.node-version }}
+    
     - run: npm ci
     - run: npm run build --if-present
     - run: npm test --if-present
@@ -32,7 +43,3 @@ jobs:
       with:
         name: dist
         path: ./dist  
-    - name: Codecov
-      uses: codecov/codecov-action@v1.2.1
-      with:
-        token: ${{ secrets.CODECOV_TOKEN }}
