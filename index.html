@@ -4,8 +4,30 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width,initial-scale=1.0">
     <title>pagescroll.js</title>
+	<link href="./assets/main.css"  type="text/css" rel="stylesheet">
 </head>
 <body>
-<p>TEST</p>
+	<div id="pscroll_container">
+      <div class="pscroll_section" style="background-color: #f59d2a">P1</div>
+      <div class="pscroll_section" style="background-color: #35489c">P2</div>
+      <div class="pscroll_section" style="background-color: #2AF598">P3</div>
+      <div class="pscroll_section" style="background-color: #562af5">P4</div>
+      <div class="pscroll_section" style="background-color: #f52ae4">P5</div>
+    </div>
+	
+	<script src="./assets/main.js"></script>
+	
+	<script>
+		const pScroll = window.pagescroll({
+			tags: [
+				"tag1",
+				"tag2",
+				"tag3",
+				"tag4",
+				"tag5",
+			],
+		})
+	</script>
+	
 </body>
 </html>
